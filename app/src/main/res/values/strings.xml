@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TransactionTask</string>
+    <string name="worksheetsuccess">Download Successfully... \n Check your Downloads folder to view the file.</string>
+    <string name="exportreport">Exported to Excel Successfully... \n Check your Downloads folder to view the file.</string>
+</resources>
