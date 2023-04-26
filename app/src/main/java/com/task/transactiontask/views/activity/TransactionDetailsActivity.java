@@ -1,6 +1,7 @@
 package com.task.transactiontask.views.activity;
 
 import android.Manifest;
+import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -110,18 +111,28 @@ public class TransactionDetailsActivity extends AppCompatActivity {
         } else {
             lastFourDigits = timeWindow;
         }
+//storage/emulated/0/Android/data/com.task.transactiontask/files/Movies/transaction1528.pdf
 
+        // File file = new File(Environment.getExternalStorageDirectory(), "transaction" + lastFourDigits + ".pdf");
+        String absolutePath = getFilePath(lastFourDigits);
+        File file = new File(absolutePath);
 
-        File file = new File(Environment.getExternalStorageDirectory(), "transaction" + lastFourDigits + ".pdf");
 
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
 
-            Toast.makeText(TransactionDetailsActivity.this, "PDF file generated successfully in Internal Storage.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TransactionDetailsActivity.this, "PDF generated in \n"+ absolutePath, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
         pdfDocument.close();
+    }
+
+    private String getFilePath(String digits) {
+        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        File directory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File file = new File(directory, "transaction" + digits + ".pdf");
+        return file.getAbsolutePath();
     }
 
 
