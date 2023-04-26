@@ -1,6 +1,7 @@
 package com.task.transactiontask.views.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
@@ -10,8 +11,8 @@ import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,6 +21,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.task.transactiontask.R;
 import com.task.transactiontask.databinding.ActivityDetailLayoutBinding;
+import com.task.transactiontask.databinding.DialogPdfBinding;
 import com.task.transactiontask.model.Transaction;
 
 import java.io.File;
@@ -121,12 +123,15 @@ public class TransactionDetailsActivity extends AppCompatActivity {
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
 
-            Toast.makeText(TransactionDetailsActivity.this, "PDF generated in \n"+ absolutePath, Toast.LENGTH_SHORT).show();
+            showSuccessPopup(absolutePath);
+
+            // Toast.makeText(TransactionDetailsActivity.this, "PDF generated in \n"+ absolutePath, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
         pdfDocument.close();
     }
+
 
     private String getFilePath(String digits) {
         ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
@@ -135,5 +140,31 @@ public class TransactionDetailsActivity extends AppCompatActivity {
         return file.getAbsolutePath();
     }
 
+    private void showSuccessPopup(String path) {
 
+        DialogPdfBinding dialogPdfBinding = DataBindingUtil.inflate(LayoutInflater.from(TransactionDetailsActivity.this), R.layout.dialog_pdf, null, false);
+        AlertDialog alertDialog = new android.app.AlertDialog.Builder(TransactionDetailsActivity.this).create();
+        alertDialog.setView(dialogPdfBinding.getRoot());
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        dialogPdfBinding.doubtsTxt.setText("PDF  successfully generated in \n" + path);
+        dialogPdfBinding.okButton.setText("Okay");
+        dialogPdfBinding.tbnCancel.setVisibility(View.GONE);
+
+        dialogPdfBinding.tbnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+            }
+        });
+        dialogPdfBinding.okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+            }
+        });
+    }
 }
